@@ -1,0 +1,26 @@
+#BackgroundCanvas {
+  display: block;
+  z-index: 1;
+  position:absolute;
+  left:0px;
+  top:0px;
+}
+#RocketCanvas {
+  display: block;
+  z-index: 2;
+  position:absolute;
+  left: 7px;
+  top:0%;
+}
+#TimeCanvas {
+  display: block;
+  z-index: 3;
+  position:absolute;
+  left:0px;
+  top:30%;
+}
+html, body {
+  width:  100%;
+  height: 100%;
+  margin: 0px;
+}
