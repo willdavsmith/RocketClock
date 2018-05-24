@@ -1,6 +1,4 @@
-var canvas = document.querySelector('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+var canvas = document.getElementById("canvas");
 var rocket = new Image();
 var BackgroundCanvas;
 var RocketCanvas;
@@ -9,13 +7,14 @@ var c1;
 var c2;
 var c3;
 var date = new Date('January 1, 1970 00:12:30');
+var paused = false;
 
 function drawBackground() {
-  var gradient=c1.createLinearGradient(0, 0, canvas.width, canvas.height);
+  var gradient = c1.createLinearGradient(0, 0, innerWidth, innerHeight);
   gradient.addColorStop(0,"purple");
   gradient.addColorStop(1,"red");
-  c1.fillStyle=gradient;
-  c1.fillRect(0,0,canvas.width,canvas.height);
+  c1.fillStyle = gradient;
+  c1.fillRect(0,0,innerWidth,innerHeight);
 }
 
 function drawClock(time) {
@@ -39,6 +38,25 @@ function drawClock(time) {
   c3.fillText(time, 720, 200);
 }
 
+function resetClock() {
+  date.setSeconds(0);
+  date.setMinutes(25);
+}
+function pauseClock() {
+  paused = !paused;
+  var pausedSeconds = date.getSeconds() + 1;
+  var pausedMinutes = date.getMinutes();
+  console.log(pausedSeconds);
+  checkPaused();
+  function checkPaused() {
+    if (paused == true) {
+      date.setSeconds(pausedSeconds);
+      date.setMinutes(pausedMinutes);
+      window.setTimeout(checkPaused, 1000);
+    }
+  }
+}
+
 function drawRocket() {
   rocket.onload = function() {
     c2.drawImage(rocket, 0, (window.innerHeight * ((date.getMinutes()+date.getSeconds()/60)/27)));
@@ -47,8 +65,8 @@ function drawRocket() {
 }
 
 function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  c1.canvas.width = innerWidth;
+  c1.canvas.height = innerHeight;
   drawBackground();
   drawRocket();
   drawClock(date);
@@ -63,19 +81,19 @@ function runClock() {
     }
     else {
       date.setSeconds(date.getSeconds() - 1);
-      console.log(date.getSeconds());
-      c2.clearRect(0, 0, canvas.width, canvas.height);
-      c3.clearRect(0, 0, canvas.width, canvas.height);
+      c2.clearRect(0, 0, innerWidth, innerHeight);
+      c3.clearRect(0, 0, innerWidth, innerHeight);
       drawClock(date);
       drawRocket();
     }
   }
 }
 
-
 function init() {
   BackgroundCanvas = document.getElementById("BackgroundCanvas");
   c1 = BackgroundCanvas.getContext("2d");
+  c1.canvas.width = innerWidth;
+  c1.canvas.height = innerHeight;
   RocketCanvas = document.getElementById("RocketCanvas");
   c2 = RocketCanvas.getContext("2d");
   TimeCanvas = document.getElementById("TimeCanvas");
@@ -92,5 +110,4 @@ function init() {
 
   addEventListener('resize', resize, false);
 }
-
 init();
