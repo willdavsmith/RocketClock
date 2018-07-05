@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Rocket Clock</title>
-  <link rel="icon" href="./rocket_icon.png">
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <canvas id="BackgroundCanvas"></canvas>
-  <canvas id="RocketCanvas"></canvas>
-  <canvas id="TimeCanvas"></canvas>
-  <script src="canvas.js"></script>
-  <input id="reset" type="button" value="Reset" onclick = "resetClock()"/>
-  <input id="pause" type="button" value="Pause" onclick = "pauseClock()"/>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <title>Rocket Clock</title>
+        <link rel="icon" href="./rocket_icon.png">
+        <link rel="stylesheet" href="./style.css">
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:200i" rel="stylesheet">
+    </head>
+    <body>
+        <input id="reset" type="button" value="Reset" onclick = "resetClock()"/>
+        <input id="pause" type="button" value="Pause" onclick = "pauseClock()"/>
+        <canvas id="TimeCanvas"></canvas>
+        <canvas id="RocketCanvas"></canvas>
+        <script src="canvas.js"></script>
+    </body>
 </html>

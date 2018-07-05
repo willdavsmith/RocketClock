@@ -1,113 +1,103 @@
-var canvas = document.getElementById("canvas");
-var rocket = new Image();
-var BackgroundCanvas;
-var RocketCanvas;
-var TimeCanvas;
-var c1;
-var c2;
-var c3;
-var date = new Date('January 1, 1970 00:12:30');
-var paused = false;
+let RocketCanvas = document.getElementById("RocketCanvas");
+let c2 = RocketCanvas.getContext("2d");
+c2.canvas.width = 30;
+c2.canvas.height = innerHeight;
+let TimeCanvas = document.getElementById("TimeCanvas");
+let c3 = TimeCanvas.getContext("2d");
+c3.canvas.width = 900;
+c3.canvas.height = 300;
+let rocket = new Image();
+rocket.src = "./rocket.png";
+let paused = false;
+let time = new Time(25, 0);
 
-function drawBackground() {
-  var gradient = c1.createLinearGradient(0, 0, innerWidth, innerHeight);
-  gradient.addColorStop(0,"purple");
-  gradient.addColorStop(1,"red");
-  c1.fillStyle = gradient;
-  c1.fillRect(0,0,innerWidth,innerHeight);
+function Time(minutes, seconds){
+  this._seconds = seconds;
+  this._minutes = minutes;
+
+  this.getSeconds = function() {
+    return this._seconds;
+  };
+  this.getMinutes = function() {
+    return this._minutes;
+  };
+  this.setSeconds = function(newS) {
+    this._seconds = newS;
+  };
+  this.setMinutes = function(newM) {
+    this._minutes = newM;
+  };
+
+  this.decrementClock = function() {
+    if (this._seconds !== 0) {
+      this._seconds--;
+    }
+    else if (this._seconds === 0 && this._minutes !== 0) {
+      this._minutes--;
+      this._seconds = 59;
+    }
+    else {
+      console.log('DONE');
+    }
+  };
+
+  // Determines if the time should be represented with a preceding 0 or not. e.g. 9 => 09 and 10 => 10
+  this.toOutput = function() {
+    let s, m;
+    if (this._seconds/10 < 1) {s = "0" + this._seconds;}
+    else {s = this._seconds;}
+    if (this._minutes/10 < 1) {m = "0" + this._minutes;}
+    else {m = this._minutes;}
+
+    // returns the time as a String in the form "00 00"
+    return `${m} ${s}`;
+  };
 }
 
 function drawClock(time) {
-  if (time.getSeconds() / 10 < 1) {
-    seconds = "0" + time.getSeconds().toString();
-  }
-  else {
-    seconds = time.getSeconds().toString();
-  }
-  if (time.getMinutes() / 10 < 1) {
-    minutes = "0" + time.getMinutes().toString();
-  }
-  else {
-    minutes = time.getMinutes().toString();
-  }
-
-  time = minutes + " " + seconds;
-  c3.font = "300px Courier New";
+  c3.font = "300px IBM Plex Mono";
   c3.fillStyle = "white";
-  c3.textAlign = "center";
-  c3.fillText(time, 720, 200);
+  c3.fillText(time.toOutput(), 0, 250);
 }
 
 function resetClock() {
-  date.setSeconds(0);
-  date.setMinutes(25);
+  time.setSeconds(0);
+  time.setMinutes(25);
 }
+
 function pauseClock() {
   paused = !paused;
-  var pausedSeconds = date.getSeconds() + 1;
-  var pausedMinutes = date.getMinutes();
-  console.log(pausedSeconds);
+  let pausedSeconds = time.getSeconds() + 1;
+  let pausedMinutes = time.getMinutes();
   checkPaused();
   function checkPaused() {
-    if (paused == true) {
-      date.setSeconds(pausedSeconds);
-      date.setMinutes(pausedMinutes);
-      window.setTimeout(checkPaused, 1000);
+    if (paused) {
+      time.setSeconds(pausedSeconds);
+      time.setMinutes(pausedMinutes);
+      window.setTimeout(checkPaused, 100);
+    }
+    else {
+      pausedSeconds = null;
+      pausedMinutes = null;
+      // document.getElementById("Pause"). = "Start"
     }
   }
 }
 
 function drawRocket() {
-  rocket.onload = function() {
-    c2.drawImage(rocket, 0, (window.innerHeight * ((date.getMinutes()+date.getSeconds()/60)/27)));
-  }
-  rocket.src = "./rocket.png";
+  c2.clearRect(0, 0, c2.canvas.width, c2.canvas.height);
+  let rocketX = 0;
+  let rocketY = window.innerHeight * ((time.getMinutes()+time.getSeconds()/60)/27);
+  c2.drawImage(rocket, rocketX, rocketY);
 }
-
-function resize() {
-  c1.canvas.width = innerWidth;
-  c1.canvas.height = innerHeight;
-  drawBackground();
-  drawRocket();
-  drawClock(date);
-}
-
 
 function runClock() {
-  var countdownInterval = setInterval(countdown, 1000);
-  function countdown() {
-    if (date.getMinutes() == 0 && date.getSeconds() == 0) {
-      clearInterval(countdownInterval);
-    }
-    else {
-      date.setSeconds(date.getSeconds() - 1);
-      c2.clearRect(0, 0, innerWidth, innerHeight);
-      c3.clearRect(0, 0, innerWidth, innerHeight);
-      drawClock(date);
-      drawRocket();
-    }
-  }
-}
-
-function init() {
-  BackgroundCanvas = document.getElementById("BackgroundCanvas");
-  c1 = BackgroundCanvas.getContext("2d");
-  c1.canvas.width = innerWidth;
-  c1.canvas.height = innerHeight;
-  RocketCanvas = document.getElementById("RocketCanvas");
-  c2 = RocketCanvas.getContext("2d");
-  TimeCanvas = document.getElementById("TimeCanvas");
-  c3 = TimeCanvas.getContext("2d");
-  c2.canvas.width = 100;
-  c2.canvas.height = window.innerHeight;
-  c3.canvas.width = window.innerWidth;
-  c3.canvas.height = 210;
-
-  drawBackground();
+  time.decrementClock();
+  c3.clearRect(0, 0, c3.canvas.width, c3.canvas.height);
+  drawClock(time);
   drawRocket();
-  drawClock(date);
-  runClock();
-
-  addEventListener('resize', resize, false);
 }
-init();
+
+drawRocket();
+drawClock(time);
+setInterval(runClock, 1000);
